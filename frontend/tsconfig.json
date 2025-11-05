@@ -2,7 +2,11 @@
   "extends": "./tsconfig.node.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "types": ["vite/client"]
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "bundler",
+    "types": ["vite/client", "react", "react-dom"],
+    "skipLibCheck": true,
+    "strict": true
   },
-  "include": ["src"]
+  "include": ["src", "vite-env.d.ts"]
 }

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { http, setAuthToken } from "../api/http";
 import { endpoints } from "../api/endpoints";
 
-export type Role = "Admin" | "Supervisor" | "Mecanico" | "Facturacion" | "Inventario";
+export type Role = "Admin" | "Supervisor" | "Mecanico" | "Facturacion" | "Inventario" | "Cliente";
 
 export interface AuthUser {
   id: number;

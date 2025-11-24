@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: "Open Sans", sans-serif;
-  background-color: #f5f6fa;
+  background-color: #f6f8fb;
 }
 
 .app-layout {
@@ -11,15 +11,19 @@ body {
 }
 
 .sidebar {
-  background-color: #0f172a;
-  color: #fff;
+  background-color: #f9fbff;
+  color: #111827;
   padding: 1.5rem;
+  border-right: 1px solid #e5e7eb;
 }
 
 .sidebar__brand {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 2rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .sidebar nav ul {
@@ -28,22 +32,29 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .sidebar nav a {
-  color: #e2e8f0;
+  color: #4b5563;
   text-decoration: none;
   display: flex;
   align-items: center;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.75rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  font-weight: 600;
+}
+
+.sidebar nav a i {
+  font-size: 1.05rem;
 }
 
 .sidebar nav a.active,
 .sidebar nav a:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background-color: #e8f1ff;
+  color: #2563eb;
 }
 
 .topbar {
@@ -60,6 +71,43 @@ body {
 
 .page-wrapper {
   padding: 1.5rem;
+}
+
+.dialog-mask {
+  z-index: 2000 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto !important;
+}
+
+.new-cita-dialog {
+  width: 100%;
+  max-width: 36rem;
+  z-index: 2010 !important; /* ensure dialog renders above custom mask */
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.p-dropdown-panel {
+  z-index: 2100 !important;
+}
+
+/* ensure dropdown panels used in the cita dialog are visible above overlays */
+.citas-dropdown-panel {
+  z-index: 99999 !important;
+  background: #fff !important;
+  color: #111827 !important;
+}
+
+/* Strong override for debugging dropdown visibility inside dialogs */
+.citas-dropdown-panel, .p-dropdown-panel {
+  z-index: 2147483647 !important; /* max z-index */
+  position: fixed !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
 }
 
 @media (max-width: 960px) {

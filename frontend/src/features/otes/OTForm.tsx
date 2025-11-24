@@ -85,7 +85,7 @@ export const OTForm = () => {
   }, [id]);
 
   return (
-    <Card title={id ? "Detalle OT" : "Nueva OT"}>
+    <Card title={id ? "Detalle OT" : "Nueva OT"} className="shadow-1 border-round-xl" style={{ border: "1px solid #e5e7eb" }}>
       <Formik
         enableReinitialize
         initialValues={initialValues}
@@ -117,9 +117,9 @@ export const OTForm = () => {
         }}
       >
         {({ values, errors, touched, setFieldValue, isSubmitting }) => (
-          <Form className="flex flex-column gap-3">
+          <Form className="flex flex-column gap-4">
             <div className="grid formgrid">
-              <div className="field col-12 md:col-4">
+              <div className="field col-12 md:col-5">
                 <label htmlFor="vehiculo_id">Vehiculo</label>
                 <Dropdown
                   id="vehiculo_id"
@@ -127,10 +127,11 @@ export const OTForm = () => {
                   options={vehiculos}
                   onChange={(e) => setFieldValue("vehiculo_id", e.value)}
                   placeholder="Seleccione"
+                  className="w-full"
                 />
                 {touched.vehiculo_id && errors.vehiculo_id && <small className="p-error">{errors.vehiculo_id as string}</small>}
               </div>
-              <div className="field col-12 md:col-4">
+              <div className="field col-12 md:col-5">
                 <label htmlFor="usuario_responsable_id">Responsable</label>
                 <Dropdown
                   id="usuario_responsable_id"
@@ -138,6 +139,7 @@ export const OTForm = () => {
                   options={usuarios}
                   onChange={(e) => setFieldValue("usuario_responsable_id", e.value)}
                   placeholder="Seleccione"
+                  className="w-full"
                 />
               </div>
               <div className="field col-12">
@@ -146,6 +148,7 @@ export const OTForm = () => {
                   id="descripcion"
                   value={values.descripcion ?? ""}
                   onChange={(e) => setFieldValue("descripcion", e.target.value)}
+                  className="w-full"
                 />
               </div>
             </div>
@@ -174,7 +177,11 @@ export const OTForm = () => {
                   {values.detalles.map((detalle, index) => {
                     const detalleErrors = (errors.detalles?.[index] ?? {}) as Record<string, string>;
                     return (
-                      <Card key={index} className="p-3">
+                      <Card
+                        key={index}
+                        className="p-3 border-round-lg"
+                        style={{ border: "1px solid #e5e7eb", background: "#f9fbff" }}
+                      >
                         <div className="grid formgrid">
                           <div className="field col-12 md:col-3">
                             <label>Tipo</label>
@@ -205,6 +212,7 @@ export const OTForm = () => {
                             <InputText
                               value={detalle.cantidad != null ? detalle.cantidad.toString() : ""}
                               onChange={(e) => setFieldValue(`detalles[${index}].cantidad`, Number(e.target.value) || 0)}
+                              className="w-full"
                             />
                           </div>
                           <div className="field col-12 md:col-3">
@@ -218,6 +226,7 @@ export const OTForm = () => {
                                   e.target.value ? Number(e.target.value) : null
                                 )
                               }
+                              className="w-full"
                             />
                           </div>
                           <div className="field col-12">
@@ -225,6 +234,7 @@ export const OTForm = () => {
                             <InputText
                               value={detalle.descripcion ?? ""}
                               onChange={(e) => setFieldValue(`detalles[${index}].descripcion`, e.target.value)}
+                              className="w-full"
                             />
                           </div>
                           <div className="field col-12 flex justify-content-end">

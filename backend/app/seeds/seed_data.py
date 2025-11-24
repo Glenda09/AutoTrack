@@ -26,9 +26,10 @@ def seed_roles(db: Session) -> dict[str, Rol]:
     roles = {
         "Admin": "Acceso total",
         "Supervisor": "Gestiona operaciones",
-        "Mecanico": "Gestiona órdenes asignadas",
+        "Mecanico": "Gestiona ordenes asignadas",
         "Facturacion": "Gestiona facturas y reportes",
         "Inventario": "Gestiona inventario",
+        "Cliente": "Portal cliente",
     }
     existing_roles = {rol.name: rol for rol in db.query(Rol).all()}
     result: dict[str, Rol] = {}
@@ -48,9 +49,10 @@ def seed_users(db: Session, roles: dict[str, Rol]) -> dict[str, Usuario]:
     users_data = [
         ("admin", "Administrador", "admin@example.com", roles["Admin"], "admin123"),
         ("supervisor", "Supervisor General", "supervisor@example.com", roles["Supervisor"], "supervisor123"),
-        ("mecanico", "Mecánico Demo", "mecanico@example.com", roles["Mecanico"], "mecanico123"),
-        ("facturacion", "Facturación Demo", "facturacion@example.com", roles["Facturacion"], "facturacion123"),
+        ("mecanico", "Mecanico Demo", "mecanico@example.com", roles["Mecanico"], "mecanico123"),
+        ("facturacion", "Facturacion Demo", "facturacion@example.com", roles["Facturacion"], "facturacion123"),
         ("inventario", "Inventario Demo", "inventario@example.com", roles["Inventario"], "inventario123"),
+        ("cliente_portal", "Cliente Portal", "cliente@example.com", roles["Cliente"], "cliente123"),
     ]
     existing = {user.username: user for user in db.query(Usuario).all()}
     result: dict[str, Usuario] = {}

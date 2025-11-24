@@ -1,4 +1,5 @@
 from collections.abc import Generator
+import os
 
 import pytest
 from fastapi.testclient import TestClient
@@ -15,10 +16,16 @@ from app.db import session as session_module
 from app.main import app
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
+USE_MYSQL_TEST_DB = os.getenv("USE_MYSQL_TEST_DB") == "1"
 
 
 @pytest.fixture(scope="session", autouse=True)
 def override_settings() -> Generator[None, None, None]:
+    if USE_MYSQL_TEST_DB:
+        # Usar la configuración real (MySQL) sin sobreescritura.
+        yield
+        return
+
     test_engine = create_engine(
         SQLALCHEMY_TEST_DATABASE_URL,
         connect_args={"check_same_thread": False},

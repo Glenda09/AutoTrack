@@ -9,16 +9,18 @@ interface MenuItem {
   roles?: Role[];
 }
 
+const staffRoles: Role[] = ["Admin", "Supervisor", "Mecanico", "Facturacion", "Inventario"];
+
 const menuItems: MenuItem[] = [
-  { label: "Dashboard", icon: "pi pi-home", to: "/" },
-  { label: "Clientes", icon: "pi pi-users", to: "/clientes" },
-  { label: "Vehículos", icon: "pi pi-car", to: "/vehiculos" },
-  { label: "Inventario", icon: "pi pi-box", to: "/inventario" },
-  { label: "Órdenes de Trabajo", icon: "pi pi-briefcase", to: "/otes" },
-  { label: "Facturación", icon: "pi pi-file", to: "/facturacion" },
-  { label: "Citas", icon: "pi pi-calendar", to: "/citas" },
-  { label: "Reportes", icon: "pi pi-chart-line", to: "/reportes" },
-  { label: "Usuarios", icon: "pi pi-lock", to: "/usuarios", roles: ["Admin"] },
+  { label: "Inicio", icon: "pi pi-home", to: "/" },
+  { label: "Clientes", icon: "pi pi-users", to: "/clientes", roles: staffRoles },
+  { label: "Vehiculos", icon: "pi pi-car", to: "/vehiculos", roles: staffRoles },
+  { label: "Ordenes de Trabajo", icon: "pi pi-briefcase", to: "/otes", roles: staffRoles },
+  { label: "Agenda", icon: "pi pi-calendar", to: "/citas" }, // disponible para Cliente para solicitud/consulta
+  { label: "Inventario", icon: "pi pi-box", to: "/inventario", roles: staffRoles },
+  { label: "Facturacion", icon: "pi pi-file", to: "/facturacion", roles: staffRoles },
+  { label: "Reportes", icon: "pi pi-chart-line", to: "/reportes", roles: ["Admin", "Supervisor", "Facturacion"] },
+  { label: "Usuarios/Config", icon: "pi pi-cog", to: "/usuarios", roles: ["Admin"] },
 ];
 
 export const Sidebar = () => {
@@ -26,7 +28,10 @@ export const Sidebar = () => {
 
   return (
     <aside className="sidebar">
-      <div className="sidebar__brand">AutoTrack</div>
+      <div className="sidebar__brand">
+        <i className="pi pi-car text-primary" />
+        <span>AutoTrack</span>
+      </div>
       <nav>
         <ul>
           {menuItems
@@ -34,7 +39,7 @@ export const Sidebar = () => {
             .map((item) => (
               <li key={item.to}>
                 <NavLink to={item.to} className={({ isActive }) => (isActive ? "active" : "")}>
-                  <i className={`${item.icon} mr-2`} />
+                  <i className={`${item.icon}`} />
                   {item.label}
                 </NavLink>
               </li>

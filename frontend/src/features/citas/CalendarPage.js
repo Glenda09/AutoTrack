@@ -1,10 +1,12 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Calendar } from "primereact/calendar";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
+import { Toast } from "primereact/toast";
+import { format } from "date-fns";
 import { DataTable } from "../../components/UI/DataTable";
 import { listClientes } from "../clientes/clientes.api";
 import { listVehiculos } from "../vehiculos/vehiculos.api";
@@ -13,6 +15,7 @@ import { formatDate } from "../../utils/formatters";
 import { useConfirm } from "../../hooks/useConfirm";
 export const CalendarPage = () => {
     const confirm = useConfirm();
+    const toast = useRef(null);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [citas, setCitas] = useState([]);
     const [clientes, setClientes] = useState([]);
@@ -28,8 +31,10 @@ export const CalendarPage = () => {
     const load = async (date) => {
         if (!date)
             return;
-        const desde = date.toISOString().split("T")[0];
-        const data = await listCitas({ desde, hasta: desde, size: 100 });
+        const base = format(date, "yyyy-MM-dd");
+        const desde = `${base}T00:00:00`;
+        const hasta = `${base}T23:59:59`;
+        const data = await listCitas({ desde, hasta, size: 100 });
         setCitas(data.items);
     };
     useEffect(() => {
@@ -56,10 +61,24 @@ export const CalendarPage = () => {
                         }) })] })),
         },
     ];
-    const openDialog = () => {
+    const openDialog = async () => {
         if (!selectedDate)
             return;
         const iso = selectedDate.toISOString().split("T")[0];
+        // Ensure lists are loaded before opening the dialog so Dropdowns show options
+        try {
+            if (!clientes || clientes.length === 0) {
+                const data = await listClientes({ page: 1, size: 100 });
+                setClientes(data.items.map((c) => ({ label: c.nombre, value: c.id })));
+            }
+            if (!vehiculos || vehiculos.length === 0) {
+                const data = await listVehiculos({ page: 1, size: 100 });
+                setVehiculos(data.items.map((v) => ({ label: v.placa, value: v.id })));
+            }
+        }
+        catch (err) {
+            console.error("Error cargando clientes/vehiculos:", err);
+        }
         setForm({
             cliente_id: 0,
             vehiculo_id: 0,
@@ -70,15 +89,22 @@ export const CalendarPage = () => {
         setShowDialog(true);
     };
     const submit = async () => {
-        await createCita({
-            cliente_id: form.cliente_id,
-            vehiculo_id: form.vehiculo_id || undefined,
-            fecha_inicio: form.fecha_inicio,
-            fecha_fin: form.fecha_fin,
-            nota: form.nota,
-        });
-        setShowDialog(false);
-        load(selectedDate);
+        try {
+            await createCita({
+                cliente_id: form.cliente_id,
+                vehiculo_id: form.vehiculo_id || undefined,
+                fecha_inicio: form.fecha_inicio,
+                fecha_fin: form.fecha_fin,
+                nota: form.nota,
+            });
+            toast.current?.show({ severity: "success", summary: "Cita creada", life: 2000 });
+            setShowDialog(false);
+            load(selectedDate);
+        }
+        catch (error) {
+            console.error("No se pudo crear la cita", error);
+            toast.current?.show({ severity: "error", summary: "Error", detail: "No se pudo crear la cita", life: 3000 });
+        }
     };
-    return (_jsxs("div", { className: "flex flex-column gap-3", children: [_jsxs("div", { className: "flex align-items-center justify-content-between", children: [_jsx("h2", { children: "Citas" }), _jsx(Button, { label: "Nueva cita", icon: "pi pi-plus", onClick: openDialog })] }), _jsx(Calendar, { value: selectedDate, onChange: (e) => setSelectedDate(e.value), inline: true }), _jsx(DataTable, { value: citas, columns: columns, rows: 10 }), _jsx(Dialog, { header: "Nueva cita", visible: showDialog, onHide: () => setShowDialog(false), style: { width: "32rem" }, children: _jsxs("div", { className: "flex flex-column gap-3", children: [_jsx(Dropdown, { value: form.cliente_id, options: clientes, onChange: (e) => setForm((prev) => ({ ...prev, cliente_id: e.value })), placeholder: "Cliente" }), _jsx(Dropdown, { value: form.vehiculo_id, options: vehiculos, onChange: (e) => setForm((prev) => ({ ...prev, vehiculo_id: e.value })), placeholder: "Veh\u00EDculo", showClear: true }), _jsx(InputTextarea, { autoResize: true, rows: 3, placeholder: "Nota", value: form.nota, onChange: (e) => setForm((prev) => ({ ...prev, nota: e.target.value })) }), _jsx(Button, { label: "Guardar", onClick: submit, disabled: !form.cliente_id })] }) })] }));
+    return (_jsxs("div", { className: "flex flex-column gap-3", children: [_jsx(Toast, { ref: toast, position: "top-right" }), _jsxs("div", { className: "flex align-items-center justify-content-between", children: [_jsx("h2", { children: "Citas" }), _jsx(Button, { label: "Nueva cita", icon: "pi pi-plus", onClick: openDialog })] }), _jsx(Calendar, { value: selectedDate, onChange: (e) => setSelectedDate(e.value), inline: true }), _jsx(DataTable, { value: citas, columns: columns, rows: 10 }), _jsx(Dialog, { header: "Nueva cita", visible: showDialog, onHide: () => setShowDialog(false), baseZIndex: 2000, style: { width: "32rem" }, modal: true, blockScroll: true, draggable: false, appendTo: document.body, className: "new-cita-dialog", maskClassName: "dialog-mask", children: _jsxs("div", { className: "flex flex-column gap-3", children: [_jsx(Dropdown, { value: form.cliente_id, options: clientes, onChange: (e) => setForm((prev) => ({ ...prev, cliente_id: e.value })), placeholder: "Cliente", appendTo: document.body, panelStyle: { zIndex: 3000 }, panelClassName: "citas-dropdown-panel" }), _jsx(Dropdown, { value: form.vehiculo_id, options: vehiculos, onChange: (e) => setForm((prev) => ({ ...prev, vehiculo_id: e.value })), placeholder: "Veh\u00EDculo", showClear: true, appendTo: document.body, panelStyle: { zIndex: 3000 }, panelClassName: "citas-dropdown-panel" }), _jsx(InputTextarea, { autoResize: true, rows: 3, placeholder: "Nota", value: form.nota, onChange: (e) => setForm((prev) => ({ ...prev, nota: e.target.value })) }), _jsx(Button, { label: "Guardar", onClick: submit, disabled: !form.cliente_id })] }) })] }));
 };

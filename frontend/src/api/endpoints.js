@@ -20,5 +20,13 @@ export const endpoints = {
         inventario: "/reportes/movimientos-inventario.csv",
         tecnicos: "/reportes/rendimiento-tecnicos.csv",
         cartera: "/reportes/estado-cartera.csv",
+        kpiMensual: "/reportes/kpi-mensual",
+        stockBajo: "/reportes/stock-bajo",
+        ordenesDetalladas: "/reportes/ordenes-detalladas",
+    },
+    public: {
+        slots: "/public/citas/slots",
+        solicitudCita: "/public/citas/solicitud",
+        estadoVehiculo: "/public/estado-vehiculo",
     },
 };

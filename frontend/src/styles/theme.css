@@ -90,24 +90,14 @@ body {
 }
 
 .p-dropdown-panel {
-  z-index: 2100 !important;
+  /* keep overlays above dialogs without breaking PrimeReact positioning */
+  z-index: 2000 !important;
 }
 
-/* ensure dropdown panels used in the cita dialog are visible above overlays */
 .citas-dropdown-panel {
-  z-index: 99999 !important;
+  z-index: 2050 !important;
   background: #fff !important;
   color: #111827 !important;
-}
-
-/* Strong override for debugging dropdown visibility inside dialogs */
-.citas-dropdown-panel, .p-dropdown-panel {
-  z-index: 2147483647 !important; /* max z-index */
-  position: fixed !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  transform: none !important;
-  pointer-events: auto !important;
 }
 
 @media (max-width: 960px) {

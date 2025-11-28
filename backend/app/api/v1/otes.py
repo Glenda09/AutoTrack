@@ -3,13 +3,14 @@ from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import and_, or_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.api import deps
 from app.core.deps import get_db
 from app.db.models.detalle_orden import DetalleOrden, TipoItemEnum
 from app.db.models.historial_precio import HistorialPrecio
 from app.db.models.orden_trabajo import EstadoOrdenEnum, OrdenTrabajo
+from app.db.models.vehiculo import Vehiculo
 from app.db.models.producto import Producto
 from app.schemas.detalle_orden import DetalleOrdenCreate, DetalleOrdenOut
 from app.schemas.orden_trabajo import (
@@ -49,6 +50,13 @@ def _map_detalle_out(detalle: DetalleOrden) -> DetalleOrdenOut:
 
 def _map_orden_out(orden: OrdenTrabajo) -> OrdenTrabajoOut:
     data = OrdenTrabajoOut.model_validate(orden)
+    # Enriquecer la salida con datos del cliente/vehículo para el listado
+    if orden.vehiculo:
+        data.vehiculo_placa = orden.vehiculo.placa
+        data.vehiculo_modelo = orden.vehiculo.modelo
+        data.vehiculo_marca = orden.vehiculo.marca
+        if orden.vehiculo.cliente:
+            data.cliente_nombre = orden.vehiculo.cliente.nombre
     data.detalles = [_map_detalle_out(detalle) for detalle in orden.detalles]
     return data
 
@@ -64,7 +72,10 @@ def list_ordenes(
     page: int = Query(default=1, ge=1),
     size: int = Query(default=20, ge=1, le=100),
 ) -> PaginatedResponse[OrdenTrabajoOut]:
-    query = db.query(OrdenTrabajo)
+    query = db.query(OrdenTrabajo).options(
+        joinedload(OrdenTrabajo.vehiculo).joinedload(Vehiculo.cliente),
+        joinedload(OrdenTrabajo.detalles),
+    )
     if estado:
         query = query.filter(OrdenTrabajo.estado == estado)
     if desde:

@@ -14,7 +14,6 @@ const staffRoles: Role[] = ["Admin", "Supervisor", "Mecanico", "Facturacion", "I
 const menuItems: MenuItem[] = [
   { label: "Inicio", icon: "pi pi-home", to: "/" },
   { label: "Clientes", icon: "pi pi-users", to: "/clientes", roles: staffRoles },
-  { label: "Vehiculos", icon: "pi pi-car", to: "/vehiculos", roles: staffRoles },
   { label: "Ordenes de Trabajo", icon: "pi pi-briefcase", to: "/otes", roles: staffRoles },
   { label: "Agenda", icon: "pi pi-calendar", to: "/citas" }, // disponible para Cliente para solicitud/consulta
   { label: "Inventario", icon: "pi pi-box", to: "/inventario", roles: staffRoles },

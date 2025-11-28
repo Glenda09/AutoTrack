@@ -16,6 +16,8 @@ interface DataTableProps<T> {
   rows?: number;
   first?: number;
   onPage?: (event: DataTablePageEvent) => void;
+  className?: string;
+  tableStyle?: React.CSSProperties;
 }
 
 export const DataTable = <T extends object>({
@@ -26,6 +28,8 @@ export const DataTable = <T extends object>({
   rows = 10,
   first = 0,
   onPage,
+  className,
+  tableStyle,
 }: DataTableProps<T>) => {
   return (
     <PrimeDataTable
@@ -38,7 +42,8 @@ export const DataTable = <T extends object>({
       first={first}
       onPage={onPage}
       emptyMessage="Sin registros"
-      tableStyle={{ minWidth: "50rem" }}
+      tableStyle={tableStyle ?? { minWidth: "50rem" }}
+      className={className}
     >
       {columns.map((col) => (
         <Column key={col.field} field={col.field} header={col.header} body={col.body} />

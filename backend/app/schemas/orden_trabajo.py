@@ -61,3 +61,8 @@ class OrdenTrabajoOut(OrdenTrabajoBase, TimestampedModel):
     lista_para_facturar: bool
     confirmada: bool
     detalles: List[DetalleOrdenOut] = []
+    fecha_creacion: Optional[datetime] = None
+    cliente_nombre: Optional[str] = None
+    vehiculo_placa: Optional[str] = None
+    vehiculo_modelo: Optional[str] = None
+    vehiculo_marca: Optional[str] = None

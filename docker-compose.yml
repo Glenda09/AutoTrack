@@ -10,7 +10,11 @@ services:
       MYSQL_DATABASE: ${MYSQL_DB:-autotrack}
       MYSQL_USER: ${MYSQL_USER:-autotrack}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-autotrack_pwd}
-    command: --default-authentication-plugin=caching_sha2_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: >
+      --default-authentication-plugin=caching_sha2_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --log-bin-trust-function-creators=1
     ports:
       - "3306:3306"
     healthcheck:
